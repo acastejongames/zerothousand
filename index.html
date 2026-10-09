@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#101713" />
+    <meta name="description" content="De cero a algo: un clicker 2D de vida, barrio y negocios. Empieza en la calle y construye tu propio futuro." />
+    <title>De cero a algo — Clicker de barrio</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="game.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#inicio" aria-label="De cero a algo, inicio">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 44 44" fill="none"><path d="M7 35.5 19.5 8l5.2 11.2L37 11 26.5 36l-5.2-11L7 35.5Z" fill="currentColor"/><path d="M6 39h32" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </span>
+          <span class="brand-type"><strong>DE CERO</strong><span>A ALGO <i>✳</i></span></span>
+        </a>
+        <div class="topbar-note"><span class="weather-dot"></span><span id="day-cycle">UN NUEVO DÍA</span><span class="note-divider">·</span><span id="save-status">PROGRESO GUARDADO</span></div>
+        <div class="topbar-actions">
+          <button class="top-action mode-button" id="mode-toggle" type="button" title="Cambiar modo de juego"><span class="mode-dot"></span><span id="mode-label">TRANQUILO</span></button>
+          <button class="top-action icon-action" id="sound-toggle" type="button" aria-label="Desactivar sonido" title="Sonido activado"><svg class="sound-on" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7m3-10a9 9 0 0 1 0 13"/></svg><svg class="sound-off" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="m16 9 5 6m0-6-5 6"/></svg></button>
+          <button class="top-action icon-action" id="fullscreen-toggle" type="button" aria-label="Pantalla completa" title="Pantalla completa"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m13-5h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3m13-5v3a2 2 0 0 1-2 2h-3"/></svg></button>
+        </div>
+      </header>
+
+      <main id="inicio">
+        <div class="page-heading">
+          <div><p class="eyebrow"><span></span> UNA HISTORIA DE BARRIO</p><h1>De cero <i>a algo.</i></h1></div>
+          <p class="heading-copy">Un clic cada vez.<br /><b>Una vida entera por delante.</b></p>
+        </div>
+
+        <section class="resource-strip" aria-label="Recursos">
+          <div class="resource-card money-resource"><span class="resource-label">TU BOLSILLO</span><div class="money-line"><strong id="coins-value">1 €</strong><span class="coin-glyph">●</span></div><small><span id="earned-value">1</span> € ganados en esta vida</small></div>
+          <div class="resource-card rate-resource"><span class="resource-label">POR SEGUNDO</span><strong id="mps-value">0</strong><small>MONEDAS / S</small></div>
+          <div class="resource-card rate-resource"><span class="resource-label">POR CLIC</span><strong id="mpc-value">1</strong><small id="click-factor">ENERGÍA OK</small></div>
+          <div class="resource-card vitals-resource">
+            <div class="vital-line"><div class="vital-label"><span>ENERGÍA</span><b id="energy-value">100 / 100</b></div><div class="meter"><span id="energy-meter"></span></div></div>
+            <div class="vital-line"><div class="vital-label"><span>SACIEDAD</span><b id="satiety-value">100 %</b></div><div class="meter satiety-meter"><span id="satiety-meter"></span></div></div>
+          </div>
+          <div class="resource-card rate-resource"><span class="resource-label">REPUTACIÓN</span><strong id="rep-value">0</strong><small>EN EL BARRIO</small></div>
+          <div class="resource-card rate-resource"><span class="resource-label">COMODIDAD</span><strong id="comfort-value">0 <i>C</i></strong><small id="comfort-bonus">CASA: —</small></div>
+          <div class="resource-card rate-resource dream-resource"><span class="resource-label">SUEÑOS</span><strong id="dream-value">0</strong><small>PRESTIGIO</small></div>
+        </section>
+
+        <div class="main-grid">
+          <section class="game-column" aria-label="Escena y acciones">
+            <section class="scene-card">
+              <div class="scene-header">
+                <div><p class="scene-kicker" id="stage-kicker">ETAPA 01 <span>/ 12</span> · CALLEJÓN Y PLAZA</p><h2 id="stage-title">La calle</h2></div>
+                <div class="scene-header-right"><span class="weather-tag" id="weather-tag"><i></i> TIEMPO TRANQUILO</span><span class="scene-counter" id="day-value">DÍA 01</span></div>
+              </div>
+              <div class="scene-wrap" id="scene-wrap">
+                <canvas id="scene-canvas" tabindex="0" role="button" aria-label="Pulsa para trabajar y ganar monedas" title="Haz clic para ganar monedas"></canvas>
+                <div class="scene-label scene-label-left" id="scene-location">PLAZA DEL BARRIO</div>
+                <div class="scene-label scene-label-right" id="scene-click-hint">CLIC EN LA ESCENA +1 €</div>
+                <div class="scene-event" id="scene-event" hidden><span class="event-spark">✦</span><span id="event-label">BILLETE EN EL SUELO</span><button id="event-claim" type="button">RECOGER</button><i class="event-timer"><b id="event-timer-fill"></b></i></div>
+                <div class="floating-layer" id="floating-layer" aria-hidden="true"></div>
+              </div>
+              <div class="scene-caption"><span><i class="caption-pip"></i><span id="scene-caption-text">Todavía no tienes mucho, pero tienes todo el día.</span></span><span class="scene-coords" id="scene-coords">ZONA 01 — PLAZA</span></div>
+            </section>
+
+            <section class="click-panel">
+              <div class="action-copy"><span class="section-overline">TU OFICIO ACTUAL</span><strong id="active-action">Buscar monedas en el suelo</strong><small><span id="active-action-detail">Una moneda cada vez. Todo empieza aquí.</span></small></div>
+              <button class="click-button" id="click-button" type="button"><span class="click-button-icon">＋</span><span id="click-button-label">BUSCAR MONEDAS</span><b>+<span id="click-button-value">1</span> €</b></button>
+              <div class="click-count"><span>CLICS</span><b id="clicks-value">0</b></div>
+            </section>
+
+            <section class="food-strip" aria-labelledby="food-heading">
+              <div class="food-strip-head"><div><span class="section-overline">UN POCO DE FUERZA</span><h3 id="food-heading">Lo que tienes para comer</h3></div><span id="food-count">BOLSA VACÍA</span></div>
+              <div class="food-inventory" id="food-inventory"><div class="empty-food"><span>◌</span><p>Prueba algo de comer y aparecerá aquí.<br /><b>La energía se recupera comiendo.</b></p></div></div>
+            </section>
+
+            <section class="next-step-card">
+              <div class="next-step-icon" id="next-step-icon">⌂</div>
+              <div class="next-step-copy"><span class="section-overline">EL SIGUIENTE PASO</span><strong id="next-step-title">Una habitación con llave</strong><p id="next-step-copy">Ahorra 3 k €, prueba 10 comidas distintas y consigue 5 de reputación para salir de la calle.</p></div>
+              <div class="next-step-progress"><b id="next-step-percent">0%</b><div class="step-meter"><span id="next-step-meter"></span></div><small id="next-step-foot">0 / 3 k €</small></div>
+            </section>
+
+            <section class="activity-card">
+              <div class="activity-head"><span class="section-overline">CUADERNO DE CUENTAS</span><span id="activity-count">ÚLTIMOS MOVIMIENTOS</span></div>
+              <div id="activity-log" class="activity-log"><p><i>01</i><span>Has llegado a la plaza con una moneda en el bolsillo.</span><time>AHORA</time></p></div>
+            </section>
+          </section>
+
+          <aside class="shop-panel" aria-label="Catálogo de desbloqueos">
+            <div class="shop-header"><div><p class="scene-kicker">EL BARRIO CRECE CONTIGO</p><h2>Tu próximo desbloqueo</h2></div><span class="catalog-mark">✳</span></div>
+            <div class="shop-tabs" role="tablist" aria-label="Categorías del catálogo">
+              <button class="shop-tab is-active" type="button" role="tab" aria-selected="true" data-tab="mejoras">Mejoras</button>
+              <button class="shop-tab" type="button" role="tab" aria-selected="false" data-tab="comida">Comida</button>
+              <button class="shop-tab" type="button" role="tab" aria-selected="false" data-tab="generadores">Generadores</button>
+              <button class="shop-tab" type="button" role="tab" aria-selected="false" data-tab="mapa">Mapa</button>
+              <button class="shop-tab" type="button" role="tab" aria-selected="false" data-tab="progreso">Progreso</button>
+              <button class="shop-tab" type="button" role="tab" aria-selected="false" data-tab="suenos">Sueños</button>
+            </div>
+            <div class="catalog-bar"><span id="catalog-description">Acciones y objetos que cambian tu día a día.</span><button id="sort-toggle" type="button" title="Cambiar orden del catálogo">A TU ALCANCE <span>⌄</span></button></div>
+            <div class="catalog-content" id="catalog-content" role="tabpanel" aria-live="polite"></div>
+            <div class="shop-footer"><span><i class="footer-dot"></i> PRECIOS ORIENTATIVOS · +15 % POR UNIDAD</span><span id="catalog-visible">CATÁLOGO 01</span></div>
+          </aside>
+        </div>
+
+        <footer class="page-footer"><span>DE CERO A ALGO <i>—</i> UNA VIDA, MUCHAS OPORTUNIDADES</span><span>PROGRESO LOCAL <b id="autosave-label">GUARDANDO AUTOMÁTICAMENTE</b></span></footer>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"><span class="toast-icon">✳</span><span id="toast-text">Desbloqueo conseguido</span></div>
+    <div class="modal-backdrop" id="modal-backdrop" hidden><section class="game-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button class="modal-close" id="modal-close" aria-label="Cerrar" type="button">×</button><span class="modal-spark">✳</span><p class="scene-kicker" id="modal-kicker">UN MOMENTO IMPORTANTE</p><h2 id="modal-title">Un nuevo comienzo</h2><p id="modal-copy"></p><div class="modal-actions" id="modal-actions"></div></section></div>
+    <div class="sr-only" id="announcer" aria-live="polite" aria-atomic="true"></div>
+  </body>
+</html>
